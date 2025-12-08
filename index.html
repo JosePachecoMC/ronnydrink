@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ronny Drick</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="img/rd-minilogo.png">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-black min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- LOGO MÁS GRANDE -->
+    <img 
+        id="logo-image"
+        src="img/rd-superlogo.png" 
+        alt="Logo Ronny Drink" 
+        class="mx-auto w-80 md:w-[450px]"
+    >
+
+    <h1 class="text-3xl font-bold text-red-600 mb-3 text-center">
+        ¡Bienvenido a Ronny Drink!
+    </h1>
+
+    <p class="text-white text-lg mb-6 text-center max-w-md">
+        Primero debemos verificar tu edad. Introduce tu fecha de nacimiento:
+    </p>
+
+    <!-- Inputs -->
+    <div class="flex space-x-3 justify-center mb-8 max-w-md w-full">
+
+        <input type="number" id="day" placeholder="Día" min="1" max="31" maxlength="2"
+            class="w-1/3 p-4 text-center text-xl bg-neutral-900 text-white placeholder-red-300 
+                   border-2 border-red-600 rounded-lg focus:border-red-400 focus:ring-red-400 
+                   transition duration-150 shadow-md">
+
+        <input type="number" id="month" placeholder="Mes" min="1" max="12" maxlength="2"
+            class="w-1/3 p-4 text-center text-xl bg-neutral-900 text-white placeholder-red-300 
+                   border-2 border-red-600 rounded-lg focus:border-red-400 focus:ring-red-400 
+                   transition duration-150 shadow-md">
+
+        <input type="number" id="year" placeholder="Año" min="1900" max="2100" maxlength="4"
+            class="w-1/3 p-4 text-center text-xl bg-neutral-900 text-white placeholder-red-300 
+                   border-2 border-red-600 rounded-lg focus:border-red-400 focus:ring-red-400 
+                   transition duration-150 shadow-md">
+    </div>
+
+    <!-- Botón -->
+    <button id="access-button" 
+        class="w-full max-w-md bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-4 rounded-lg 
+               transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.01] 
+               focus:outline-none focus:ring-4 focus:ring-red-500">
+        Acceder
+    </button>
+
+    <!-- Error -->
+    <div id="error-message" class="mt-6 p-4 max-w-md w-full bg-red-700 border border-red-900 
+                                 text-white rounded-lg hidden shadow-lg" role="alert">
+        <p class="font-semibold">¡Acceso Denegado!</p>
+        <p id="error-text">Debes tener al menos 18 años para acceder a este sitio.</p>
+    </div>
+
+    <script>
+        document.getElementById('access-button').addEventListener('click', verifyAge);
+
+        const dayInput = document.getElementById('day');
+        const monthInput = document.getElementById('month');
+        const yearInput = document.getElementById('year');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+
+        function verifyAge() {
+            errorMessage.classList.add('hidden');
+
+            const day = parseInt(dayInput.value);
+            const month = parseInt(monthInput.value);
+            const year = parseInt(yearInput.value);
+
+            if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || month < 1 || year < 1) {
+                errorText.textContent = "Por favor, introduce una fecha válida.";
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            if (day > 31 || month > 12 || year < 1900 || year > new Date().getFullYear()) {
+                errorText.textContent = "Verifica los valores introducidos.";
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            const birthDate = new Date(year, month - 1, day);
+            const currentDate = new Date();
+
+            if (birthDate.getTime() > currentDate.getTime()) {
+                errorText.textContent = "La fecha de nacimiento no puede ser futura.";
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            const requiredAge = 18;
+            const requiredDate = new Date(year + requiredAge, month - 1, day);
+
+            if (currentDate.getTime() >= requiredDate.getTime()) {
+                window.location.href = 'register.html';
+            } else {
+                errorText.textContent = "Debes tener al menos 18 años para acceder a Ronny Drink.";
+                errorMessage.classList.remove('hidden');
+            }
+        }
+
+        function setupInputLimits() {
+            dayInput.oninput = () => { if (dayInput.value.length > 2) dayInput.value = dayInput.value.slice(0, 2); };
+            monthInput.oninput = () => { if (monthInput.value.length > 2) monthInput.value = monthInput.value.slice(0, 2); };
+            yearInput.oninput = () => { if (yearInput.value.length > 4) yearInput.value = yearInput.value.slice(0, 4); };
+        }
+
+        setupInputLimits();
+    </script>
+
+</body>
+</html>
